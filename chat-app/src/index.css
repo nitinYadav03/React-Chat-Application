@@ -8,3 +8,22 @@ body {
   font-weight: 400;
   font-style: normal;
 }
+
+@layer components {
+  .message{
+    &.owner{
+      flex-direction: row-reverse;
+      .messageContent{
+        max-width: 80%;
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+        p{
+          background-color: #8da4f1;
+          color: white;
+          border-radius: 10px 0px 10px 10px;
+        }
+      }
+    }
+  }
+}

@@ -2,8 +2,8 @@ import React from 'react';
 
 const Login = () => {
   return (
-    <>
-      <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+    <div className='absolute flex items-center justify-center h-[70%] w-full'>
+      <div class="w-[30%] flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
             class="mx-auto h-10 w-auto"
@@ -11,8 +11,11 @@ const Login = () => {
             alt="Chat-Icon"
           />
           <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Register
+          Nimbus Chat
           </h2>
+          <h3 class="mt-1 text-center font-semi-bold leading-9 tracking-tight text-gray-900">
+          Login
+          </h3>
         </div>
 
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -76,17 +79,17 @@ const Login = () => {
           </form>
 
           <p class="mt-10 text-center text-sm text-gray-500">
-            You do have an account
+            Don't have an account?
             <a
               href="#"
-              class="font-semibold leading-6 text-sky-600 hover:text-sky-500"
+              class="font-semibold leading-6 text-sky-600 hover:text-sky-500 px-2"
             >
-              Login
+              Register
             </a>
           </p>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
