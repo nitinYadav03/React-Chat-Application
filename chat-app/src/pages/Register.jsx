@@ -1,26 +1,53 @@
-import React from 'react';
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import {auth} from '../firebase';
+import {React, useState} from 'react';
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {auth, storage, db} from '../firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { doc, setDoc } from "firebase/firestore"; 
+import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
 
-  const handleSubmit = (e) => {
+  const [err, setErr] = useState(false);
+  const navigate =  useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const displayName = e.target[0].value;
     const email = e.target[1].value;
     const password = e.target[2].value;
     const file = e.target[3].files[0];
-  createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      // Signed up 
-      const user = userCredential.user;
-      console.log(user);
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // ..
-    });
+
+    try{
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      const storageRef = ref(storage, displayName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on(
+        (error) => {
+          setErr(true)
+        }, 
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            await updateProfile(res.user, {
+              displayName,
+              photoURL: downloadURL,
+            })
+            await setDoc(doc(db, "users", res.user.uid), {
+              uid: res.user.uid,
+              displayName,
+              email,
+              photoURL: downloadURL,
+            });
+
+            await setDoc(doc(db, "userChats", res.user.uid), {});
+            navigate("/");
+          });
+        }
+      );
+      
+
+    }catch(err){
+      setErr(true);
+    }
   }
 
   return (
@@ -41,7 +68,7 @@ const Register = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" method="POST">
           <div>
               <label
                 htmlFor="name"
@@ -122,17 +149,17 @@ const Register = () => {
               >
                 Sign up
               </button>
+              {err && <span>Something went wrong</span>}
             </div>
           </form>
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Already have an account?
-            <a
-              href="#"
+            <span
               className="font-semibold leading-6 text-sky-600 hover:text-sky-500 px-2"
             >
-              Login
-            </a>
+              <Link to="/login">Login</Link>
+            </span>
           </p>
         </div>
       </div>
